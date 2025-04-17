@@ -1,1 +1,36 @@
-
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cred Amigo</title>
+  <style>
+    body { font-family: Arial; text-align: center; padding: 30px; }
+    img { max-width: 300px; margin-top: 20px; }
+    #qrcode, #copiaecola { display: none; }
+  </style>
+</head>
+<body>
+  <h1>Pagamento Cred Amigo</h1>
+  <p>Valor: R$ 36,90</p>
+  <button onclick="gerarPix()">Gerar QR Code</button>
+  <div id="qrcode-container">
+    <img id="qrcode" src="" alt="QR Code Pix"/>
+    <p id="copiaecola"></p>
+  </div>
+  <script>
+    async function gerarPix() {
+      const res = await fetch('/gerar-pix');
+      const data = await res.json();
+      if (data.imagemQrcode) {
+        document.getElementById('qrcode').src = data.imagemQrcode;
+        document.getElementById('qrcode').style.display = 'block';
+        document.getElementById('copiaecola').innerText = data.qrcode;
+        document.getElementById('copiaecola').style.display = 'block';
+      } else {
+        alert('Erro ao gerar QR Code');
+      }
+    }
+  </script>
+</body>
+</html>
