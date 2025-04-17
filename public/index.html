@@ -3,34 +3,86 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Cred Amigo</title>
+  <title>Pagamento Cred Amigo</title>
   <style>
-    body { font-family: Arial; text-align: center; padding: 30px; }
-    img { max-width: 300px; margin-top: 20px; }
-    #qrcode, #copiaecola { display: none; }
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #98021C; /* cor vinho */
+      color: white;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      background: white;
+      color: black;
+      padding: 30px;
+      border-radius: 12px;
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+    }
+
+    .container h1 {
+      color: #98021C;
+    }
+
+    .qrcode {
+      margin: 20px 0;
+    }
+
+    .pixcode {
+      background-color: #f0f0f0;
+      padding: 10px;
+      border-radius: 6px;
+      word-break: break-all;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 10px;
+      text-align: center;
+      font-size: 14px;
+      width: 100%;
+      color: white;
+    }
   </style>
 </head>
 <body>
-  <h1>Pagamento Cred Amigo</h1>
-  <p>Valor: R$ 36,90</p>
-  <button onclick="gerarPix()">Gerar QR Code</button>
-  <div id="qrcode-container">
-    <img id="qrcode" src="" alt="QR Code Pix"/>
-    <p id="copiaecola"></p>
+  <div class="container">
+    <h1>Pagamento Cred Amigo</h1>
+    <p>Valor: R$ 36,90</p>
+    <div class="qrcode">
+      <img id="qrCodeImage" src="carregando..." alt="QR Code" width="200"/>
+    </div>
+    <div class="pixcode" id="pixCodeText">Carregando código Pix...</div>
+    <p>Aguardando pagamento...</p>
   </div>
+
+  <footer>
+    <p>© 2025 Cred Amigo – Pagamento Seguro via Pix<br>Todos os direitos reservados</p>
+  </footer>
+
   <script>
-    async function gerarPix() {
-      const res = await fetch('/gerar-pix');
-      const data = await res.json();
-      if (data.imagemQrcode) {
-        document.getElementById('qrcode').src = data.imagemQrcode;
-        document.getElementById('qrcode').style.display = 'block';
-        document.getElementById('copiaecola').innerText = data.qrcode;
-        document.getElementById('copiaecola').style.display = 'block';
-      } else {
-        alert('Erro ao gerar QR Code');
-      }
-    }
+    fetch("/gerar-pix")
+      .then(res => res.json())
+      .then(data => {
+        if (data.qrcode && data.payload) {
+          document.getElementById("qrCodeImage").src = data.qrcode;
+          document.getElementById("pixCodeText").textContent = data.payload;
+        } else {
+          document.getElementById("qrCodeImage").alt = "Erro ao carregar";
+          document.getElementById("pixCodeText").textContent = "Erro ao gerar código Pix.";
+        }
+      })
+      .catch(err => {
+        document.getElementById("qrCodeImage").alt = "Erro ao carregar";
+        document.getElementById("pixCodeText").textContent = "Erro ao gerar código Pix.";
+      });
   </script>
 </body>
 </html>
